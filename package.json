@@ -1,0 +1,13 @@
+{
+  "name": "figma-ia-na-pratica",
+  "version": "1.0.0",
+  "description": "Instalador e kit do workshop Figma + IA, na prática (Fortaleza, 18/11/2026)",
+  "type": "module",
+  "bin": {
+    "figma-ia-instalar": "instalar.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

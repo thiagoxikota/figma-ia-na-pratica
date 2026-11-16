@@ -1,0 +1,34 @@
+name: instalador
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  testa:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        node: [18, 20, 22]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Testes do instalador (com download real do plugin)
+        run: node test/instalador.test.mjs --rede
+      - name: O comando do guia, pelo npx, numa casa limpa
+        shell: bash
+        env:
+          FIGMA_ACCESS_TOKEN: figd_TESTE_ci_npx
+          INSTALAR_SEM_ABRIR: '1'
+        run: |
+          CASA="$RUNNER_TEMP/casa npx"
+          mkdir -p "$CASA"
+          export MCP_CONFIG_PATH="$CASA/cfg.json"
+          URL="https://github.com/${GITHUB_REPOSITORY}/archive/${GITHUB_SHA}.tar.gz"
+          if [ "$RUNNER_OS" = "Windows" ]; then NPX=npx.cmd; else NPX=npx; fi
+          HOME="$CASA" USERPROFILE="$CASA" $NPX -y "$URL" < /dev/null
+          test -f "$CASA/.figma-console-mcp/plugin/manifest.json"
+          grep -q figma-console "$MCP_CONFIG_PATH"
+          echo "npx OK"
