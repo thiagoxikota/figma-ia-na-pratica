@@ -66,7 +66,7 @@ Pronto quando: você vê o frame "Minha hero" na sua cópia do arquivo, as pasta
 
 O nome técnico disso é MCP. Se um dia você for procurar sobre o assunto, é essa a palavra.
 
-Os passos indicam as diferenças do Windows, mas foram ensaiados só no Mac. No Windows, a mesa das 17h30 ajuda.
+Os passos indicam as diferenças do Windows. O instalador passa por testes automáticos no Mac e no Windows, com Node 18, 20 e 22, a cada mudança. Travou mesmo assim? A mesa das 17h30 ajuda.
 
 **Passo 1. Instale três programas.**
 
@@ -123,7 +123,7 @@ Na tela: o plugin **Figma Desktop Bridge** passa a aparecer em Plugins > Develop
 
 Plugins > Development > **Figma Desktop Bridge**. Abre uma janelinha do plugin. Deixe ela aberta.
 
-Na tela: quando a conexão está de pé, a janelinha mostra **"Local · ready"**.
+Na tela: quando a conexão está de pé, a janelinha mostra a bolinha verde e **"Connected"**. Enquanto procura, ela diz "Looking for your AI app…".
 
 **Passo 6. Teste.**
 
@@ -177,7 +177,7 @@ Esse caminho não foi ensaiado com participantes. Travou? Volte para o Claude De
 
 ## No dia
 
-Tudo acontece numa conversa só, no chat do Claude Desktop, com o Figma Desktop aberto na sua cópia, na página "Minha hero", e o plugin Figma Desktop Bridge rodando ("Local · ready").
+Tudo acontece numa conversa só, no chat do Claude Desktop, com o Figma Desktop aberto na sua cópia, na página "Minha hero", e o plugin Figma Desktop Bridge rodando (bolinha verde e "Connected").
 
 ### O alô: a primeira vitória (até 18h35)
 
@@ -316,7 +316,7 @@ Se quiser, desligue a conexão nas configurações do Claude Desktop. Para usar 
 | O navegador não abriu a página da chave | O endereço aparece escrito no Terminal: https://www.figma.com/settings |
 | O instalador diz que já existe uma conexão com o mesmo nome, ou que a configuração não é válida | Ele não mexeu em nada. Na dúvida, não digite `sim`: leve à mesa das 17h30 |
 | O instalador diz que a instalação NÃO terminou | Siga os passos que ele mostra e rode de novo. Ele reaproveita a chave que você já colou |
-| A janelinha do plugin não mostra "Local · ready" | Feche o plugin e rode de novo. O Claude Desktop foi fechado por completo depois da instalação? Desligue a VPN |
+| A janelinha do plugin fica em "Looking for your AI app…" ou "Not connected" | Feche o plugin e rode de novo. O Claude Desktop foi fechado por completo depois da instalação? Desligue a VPN |
 | O Claude não diz o nome do arquivo | Figma Desktop (não o navegador) com a sua cópia aberta e o plugin Figma Desktop Bridge rodando. Ele cai se o Figma dormir ou o arquivo fechar: rode de novo |
 | A chave venceu ou foi revogada | Crie outra (7 dias, só leitura em File content) e rode o instalador de novo |
 | Não tenho a página "Minha hero" | A sua cópia é antiga. Duplique o arquivo da Community de novo |

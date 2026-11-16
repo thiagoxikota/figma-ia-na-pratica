@@ -185,7 +185,7 @@ function askLine(question) {
 // O que o instalador grava. Serve também para saber se a entrada que já existe é a nossa.
 function ourEntry(token) {
   // Windows: o Claude Desktop não inicia `npx` direto (é um script .cmd), então
-  // o comando passa pelo cmd. Padrão ainda não ensaiado numa máquina Windows real.
+  // o comando passa pelo cmd. Testado no Windows pela CI (.github/workflows/instalador.yml).
   return {
     command: IS_WIN ? 'cmd' : 'npx',
     args: IS_WIN ? ['/c', 'npx', '-y', PINNED] : ['-y', PINNED],
