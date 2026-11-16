@@ -153,6 +153,8 @@ Pronto quando: você entra em https://app.netlify.com/drop e vê a área para ar
 
 Este guia no navegador: https://github.com/thiagoxikota/figma-ia-na-pratica
 
+Voluntários: o roteiro de vocês está em [voluntarios.md](voluntarios.md).
+
 
 ## Usa Codex?
 
