@@ -158,6 +158,13 @@ Pronto quando: você entra em https://app.netlify.com/drop e vê a área para ar
 - Celular (login com código no e-mail trava sem ele).
 - As pastas `meu-site-kit` e `handoff` na Área de Trabalho.
 
+**Na sala da Digital College:**
+
+- Não pode comida nem bebida: o chão é de carpete.
+- Notebook pessoal vai ao lado do notebook da escola, nunca em cima. Os da escola são travados na mesa.
+- **Sem notebook?** Na recepção, diga que é do evento da UXFor e peça o login de visitante dos computadores. O computador da escola deve ter o Figma Desktop, mas instalar programa nele pede administrador. Não conte com a conexão nele: você acompanha pelo telão e edita a hero à mão.
+- Usou sua chave do Figma num computador que não é seu? No fim, apague a chave no Figma: Settings > Security > Personal access tokens.
+
 Este guia no navegador: https://github.com/thiagoxikota/figma-ia-na-pratica
 
 Voluntários: o roteiro de vocês está em [voluntarios.md](voluntarios.md).

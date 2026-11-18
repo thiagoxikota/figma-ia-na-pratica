@@ -56,6 +56,8 @@ Não respondeu: plugin rodando, com "Connected"? Arquivo aberto no Figma Desktop
 - **Uma volta completa pelos 5 itens por pessoa.** Não subiu, a pessoa acompanha pelo telão. Não investiguem problema profundo de uma máquina.
 - Notebook da empresa que não deixa instalar, Linux, ou antivírus corporativo bloqueando: telão, sem tentar.
 - Rede da sala não baixa o instalador: telão.
+- Computador da escola (login de visitante da recepção): instalar pede administrador e o TI pode não estar. Não tentem: telão e hero à mão. Se a pessoa colou a chave do Figma nele, lembre de apagar a chave no fim.
+- Na sala, sem comida nem bebida (carpete). Notebook pessoal ao lado do da escola, nunca em cima.
 - **Às 18h00 a mesa fecha.** Quem estiver no meio vai para a sala e um voluntário termina com a pessoa no lugar dela.
 
 
