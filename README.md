@@ -38,7 +38,7 @@ Figma  <->  plugin Desktop Bridge  <->  servidor Figma Console MCP  <->  agente 
 
 São três partes. A primeira é rápida e inclui preencher os seus dados. A segunda é a conexão do Figma com o agente: é ela que deixa o agente ler e mexer no seu arquivo. A terceira é opcional.
 
-**Não conseguiu terminar a parte 2?** Chegue às **17h30**: tem uma mesa de instalação com voluntários, antes do workshop. Depois das 18h ninguém instala nada na sala: quem não conectou acompanha pelo telão.
+**Não conseguiu terminar a parte 2?** Tudo bem, venha assim mesmo. Se puder, chegue às **17h30**: tem uma mesa de instalação com voluntários, antes do workshop. Se não der, um voluntário ajuda você a instalar no seu lugar durante o workshop, enquanto a aula segue. Até a conexão subir, você acompanha pelo telão.
 
 Notebook da empresa que não deixa instalar programa não serve para a parte 2. Se puder, traga o pessoal.
 
@@ -47,7 +47,7 @@ Notebook da empresa que não deixa instalar programa não serve para a parte 2. 
 1. **Conta gratuita do Figma:** https://www.figma.com/signup (prefira a pessoal, não a do trabalho).
 2. **Conta gratuita do Claude:** https://claude.ai
 3. **Duplique o arquivo do exercício** para a sua conta: https://www.figma.com/community/file/1659374868260259462 . O molde fica na primeira página, **"Minha hero"**, no frame **"Minha hero"**. Ao lado dele está o **"Exemplo pronto: Thiago"**, a mesma hero já personalizada, para você ver aonde vai chegar. Duplicou antes e não tem essa página? Duplique de novo: ela é nova.
-4. **Baixe o ZIP:** https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v2.zip . Descompacte e copie para a Área de Trabalho:
+4. **Baixe o ZIP:** https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v3.zip . Descompacte e copie para a Área de Trabalho:
    - a pasta `meu-site-kit`. Ela tem o `meus-dados.txt`, o `DESIGN.md` (as regras do seu site), a pasta `reserva` e a pasta `meu-site`, vazia, onde o site vai entrar;
    - a pasta `handoff`, para o workshop seguinte, às 20h.
 5. **Preencha o `meus-dados.txt`.** Abra no TextEdit (Mac) ou no Bloco de Notas (Windows) e troque o exemplo de cada linha pelo seu:
@@ -66,7 +66,7 @@ Pronto quando: você vê o frame "Minha hero" na sua cópia do arquivo, as pasta
 
 O nome técnico disso é MCP. Se um dia você for procurar sobre o assunto, é essa a palavra.
 
-Os passos indicam as diferenças do Windows. O instalador passa por testes automáticos no Mac e no Windows, com Node 18, 20 e 22, a cada mudança. Travou mesmo assim? A mesa das 17h30 ajuda.
+Os passos indicam as diferenças do Windows. O instalador passa por testes automáticos no Mac e no Windows, com Node 18, 20 e 22, a cada mudança. Travou mesmo assim? A mesa das 17h30 ajuda, e na sala um voluntário também.
 
 **Passo 1. Instale três programas.**
 
@@ -85,13 +85,13 @@ Abra o Figma Desktop e o Claude Desktop, logados. No Terminal ou no PowerShell, 
 Mac:
 
 ```
-npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v2.tar.gz
+npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v3.tar.gz
 ```
 
 Windows (repare no `.cmd`, que evita o bloqueio de scripts do PowerShell):
 
 ```
-npx.cmd -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v2.tar.gz
+npx.cmd -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v3.tar.gz
 ```
 
 Na tela, nesta ordem:
@@ -99,7 +99,7 @@ Na tela, nesta ordem:
 1. **"Workshop Figma + Claude: instalação"** e uma lista com `[ok]` ao lado do Node, do Figma Desktop e do Claude Desktop. Faltou algum? Ele mostra o link para baixar.
 2. **"Chave do Figma"**. Ele pede um Enter e abre as configurações do Figma no navegador. Lá: aba **Security > Personal access tokens > Generate new token**. Dê um nome fácil de achar depois, como `workshop fortaleza`. Validade de **7 dias**. Em permissões, marque **só leitura em File content**. Nada mais. A chave começa com `figd_` e aparece uma vez só: copie na hora.
 3. **"Cole a chave aqui"**. Cole e aperte Enter. A chave aparece só como asteriscos (`****`), e é assim mesmo. Em seguida vem `[ok] chave recebida`.
-4. **"Ligando o Figma no Claude Desktop"**. Ele grava a conexão e mantém as outras que já existiam. Se ele disser que já existe uma conexão com o mesmo nome, só substitui se você digitar `sim`. Na dúvida, aperte Enter: nada muda, e você leva a máquina à mesa das 17h30.
+4. **"Ligando o Figma no Claude Desktop"**. Ele grava a conexão e mantém as outras que já existiam. Se ele disser que já existe uma conexão com o mesmo nome, só substitui se você digitar `sim`. Na dúvida, aperte Enter: nada muda, e um voluntário ajuda você no dia, na mesa das 17h30 ou na sala.
 5. **"Preparando o plugin do Figma"**. Leva um tempo. No fim aparece **"Falta pouco, faça nesta ordem"**, o caminho de um arquivo `manifest.json` (já copiado para você) e uma janela do Finder ou do Explorer com esse arquivo.
 
 A chave é sua: não mande para ninguém nem deixe outra pessoa digitar por você. Ela lê qualquer arquivo que a sua conta abre, por isso a conta pessoal. Como higiene opcional, você pode revogar a chave depois, em Settings > Security > Personal access tokens. Ela é só de leitura: quando o agente mexe no seu frame, quem escreve é o plugin, dentro do seu Figma aberto.
@@ -142,7 +142,7 @@ Qual arquivo está aberto no Figma e qual frame está selecionado? Responda em u
 
 Pronto quando: o Claude responde o nome da sua cópia do arquivo e "Minha hero". O `[ok]` do instalador não conta como teste. O instalador sugere outra frase para o teste; as duas servem.
 
-Não respondeu? Veja "Quando dá errado", no fim deste guia. Não resolveu? Mesa das 17h30.
+Não respondeu? Veja "Quando dá errado", no fim deste guia. Não resolveu? Um voluntário ajuda no dia, na mesa das 17h30 ou na sala.
 
 ### Parte 3. Opcional: conta grátis no Netlify (5 minutos)
 
@@ -204,7 +204,7 @@ Agora olhe o frame: o botão diz "Fale comigo"?
 
 Pronto quando: o Claude diz o nome da sua cópia do arquivo e "Fale comigo". A IA leu o seu frame pela conexão, e você conferiu. Ela leu o arquivo, não uma imagem.
 
-Não disse? Levante a mão quando o Thiago pedir. Os voluntários ajudam com o plugin e com o Claude Desktop, mas ninguém instala nada na sala. Não deu? Acompanhe pelo telão e faça o que der com o Thiago.
+Não disse? Levante a mão quando o Thiago pedir. Os voluntários ajudam com o plugin, com o Claude Desktop e, se faltar, com a instalação, no seu lugar. Enquanto isso, acompanhe pelo telão e faça o que der com o Thiago.
 
 ### Prompt 1: o agente escreve no seu Figma (até 18h55)
 
@@ -327,7 +327,7 @@ Se quiser, desligue a conexão nas configurações do Claude Desktop. Para usar 
 | Erro de script no PowerShell | Use `npx.cmd` no lugar de `npx` |
 | O comando não baixa | Digite `node` e um espaço, arraste o `instalar.mjs` da pasta do ZIP para a janela e aperte Enter. Ainda precisa de internet |
 | O navegador não abriu a página da chave | O endereço aparece escrito no Terminal: https://www.figma.com/settings |
-| O instalador diz que já existe uma conexão com o mesmo nome, ou que a configuração não é válida | Ele não mexeu em nada. Na dúvida, não digite `sim`: leve à mesa das 17h30 |
+| O instalador diz que já existe uma conexão com o mesmo nome, ou que a configuração não é válida | Ele não mexeu em nada. Na dúvida, não digite `sim`: mostre a um voluntário no dia, na mesa das 17h30 ou na sala |
 | O instalador diz que a instalação NÃO terminou | Siga os passos que ele mostra e rode de novo. Ele reaproveita a chave que você já colou |
 | A janelinha do plugin fica em "Looking for your AI app…" ou "Not connected" | Feche o plugin e rode de novo. O Claude Desktop foi fechado por completo depois da instalação? Desligue a VPN |
 | O Claude não diz o nome do arquivo | Figma Desktop (não o navegador) com a sua cópia aberta e o plugin Figma Desktop Bridge rodando. Ele cai se o Figma dormir ou o arquivo fechar: rode de novo |

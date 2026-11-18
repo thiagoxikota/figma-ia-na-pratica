@@ -2,7 +2,7 @@
 /*
  * Instalador de um comando só do workshop (Mac e Windows, Node 18+).
  *
- *   npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v2.tar.gz
+ *   npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v3.tar.gz
  *   (Windows: npx.cmd no lugar de npx. Plano B: baixar o ZIP do repo e rodar node instalar.mjs.
  *   O plano B dispensa baixar o instalador, mas o passo 4 ainda baixa a conexão pelo npm.)
  *
@@ -238,7 +238,7 @@ async function confirmConflict(paths) {
   const answer = await askLine('  Digite sim para substituir, ou só Enter para parar sem mexer em nada: ')
   if (answer.toLowerCase() !== 'sim') {
     console.log('\nParei sem mexer em nada. A sua configuração continua como estava.')
-    console.log('Leve esta tela à mesa de instalação, às 17h30, antes do workshop. Um voluntário ajuda.\n')
+    console.log('Mostre esta tela a um voluntário no dia: na mesa das 17h30 ou na sala, durante o workshop.\n')
     process.exit(4)
   }
 }
@@ -496,7 +496,7 @@ async function main() {
     console.log('  1. Confira a internet. Este passo baixa a conexão pelo npm, mesmo quando você roda pelo ZIP.')
     console.log(`  2. Feche o Claude Desktop por completo (${IS_MAC ? 'Cmd+Q' : 'clique direito no ícone perto do relógio > Quit'}), abra de novo e espere 2 minutos.`)
     console.log('  3. Rode este mesmo comando outra vez. A chave do Figma é a mesma: não precisa criar outra.')
-    console.log('\nNão resolveu até quarta? Chegue às 17h30 na mesa de instalação.\n')
+    console.log('\nNão resolveu até quarta? Venha assim mesmo: um voluntário ajuda, na mesa das 17h30 ou na sala.\n')
     process.exit(3)
   }
   ok(`plugin pronto em ${manifest}`)
@@ -515,7 +515,7 @@ async function main() {
   console.log(`     ${IS_WIN ? '%USERPROFILE%\\.figma-console-mcp\\plugin\\manifest.json' : '~/.figma-console-mcp/plugin/manifest.json'}`)
   console.log('     Ou rode o mesmo comando de novo: aperte Enter na chave e ele mostra tudo outra vez.\n')
   revealFile(manifest)
-  console.log('Travou em casa? Chegue às 17h30 na mesa de instalação. Se não der, no dia você acompanha a leitura pelo telão.\n')
+  console.log('Travou em casa? Venha assim mesmo: um voluntário ajuda, na mesa das 17h30 ou na sala, e você acompanha pelo telão até subir.\n')
 }
 
 // Rede de segurança: se a entrada do teclado fechar no meio, nunca terminar como se tivesse dado certo.
