@@ -77,6 +77,21 @@ if (WIN) {
   check('7 MSIX: reconhece o Claude Desktop', r.out.includes('[ok] Claude Desktop'), r.out)
 }
 
+// 7b. Codex: sem Codex na máquina, não cria nada
+h = home(); r = run(h, { env: { FIGMA_ACCESS_TOKEN: TOK } })
+check('7b sem Codex não cria config.toml', r.code === 0 && !existsSync(join(h, '.codex', 'config.toml')), r.out)
+
+// 7c. Codex existe: grava o bloco, preserva o resto e troca só o nosso bloco antigo
+h = home(); mkdirSync(join(h, '.codex'), { recursive: true })
+const tomlPath = join(h, '.codex', 'config.toml')
+writeFileSync(tomlPath, 'model = "gpt-5"\n\n[mcp_servers.figma-console]\ncommand = "node"\nargs = ["/velho.js"]\n\n[mcp_servers.figma-console.env]\nFIGMA_ACCESS_TOKEN = "figd_ANTIGA"\n\n[mcp_servers.outro]\ncommand = "x"\n')
+r = run(h, { env: { FIGMA_ACCESS_TOKEN: TOK } })
+const toml = existsSync(tomlPath) ? readFileSync(tomlPath, 'utf8') : ''
+check('7c Codex: bloco novo com chave e tempo de partida', r.code === 0 && toml.includes(`FIGMA_ACCESS_TOKEN = "${TOK}"`) && toml.includes('startup_timeout_sec = 120') && toml.includes('figma-console-mcp@1.35.0'), toml + r.out)
+check('7c Codex: preserva o resto e tira o bloco velho', toml.includes('model = "gpt-5"') && toml.includes('[mcp_servers.outro]') && !toml.includes('figd_ANTIGA') && !toml.includes('/velho.js') && (toml.match(/\[mcp_servers\.figma-console\]/g) || []).length === 1, toml)
+check('7c Codex: chave nunca aparece na tela', !r.out.includes(TOK) && r.out.includes('Codex também ligado'), r.out)
+check('7c caminho fixo do manifest impresso', r.out.includes('.figma-console-mcp'), r.out)
+
 // 8. Rede: baixa o servidor de verdade e cria o plugin numa casa limpa
 if (process.argv.includes('--rede')) {
   h = home(false); const t0 = Date.now()

@@ -47,7 +47,7 @@ Notebook da empresa que não deixa instalar programa não serve para a parte 2. 
 1. **Conta gratuita do Figma:** https://www.figma.com/signup (prefira a pessoal, não a do trabalho).
 2. **Conta gratuita do Claude:** https://claude.ai
 3. **Duplique o arquivo do exercício** para a sua conta: https://www.figma.com/community/file/1659374868260259462 . O molde fica na primeira página, **"Minha hero"**, no frame **"Minha hero"**. Ao lado dele está o **"Exemplo pronto: Thiago"**, a mesma hero já personalizada, para você ver aonde vai chegar. Duplicou antes e não tem essa página? Duplique de novo: ela é nova.
-4. **Baixe o ZIP:** https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v1.zip . Descompacte e copie para a Área de Trabalho:
+4. **Baixe o ZIP:** https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v2.zip . Descompacte e copie para a Área de Trabalho:
    - a pasta `meu-site-kit`. Ela tem o `meus-dados.txt`, o `DESIGN.md` (as regras do seu site), a pasta `reserva` e a pasta `meu-site`, vazia, onde o site vai entrar;
    - a pasta `handoff`, para o workshop seguinte, às 20h.
 5. **Preencha o `meus-dados.txt`.** Abra no TextEdit (Mac) ou no Bloco de Notas (Windows) e troque o exemplo de cada linha pelo seu:
@@ -85,13 +85,13 @@ Abra o Figma Desktop e o Claude Desktop, logados. No Terminal ou no PowerShell, 
 Mac:
 
 ```
-npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v1.tar.gz
+npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v2.tar.gz
 ```
 
 Windows (repare no `.cmd`, que evita o bloqueio de scripts do PowerShell):
 
 ```
-npx.cmd -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v1.tar.gz
+npx.cmd -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v2.tar.gz
 ```
 
 Na tela, nesta ordem:
@@ -116,6 +116,13 @@ No Figma Desktop, abra a sua cópia do arquivo. Menu **Plugins > Development > I
 
 - Mac: aperte Cmd+Shift+G, cole o caminho e confirme. A pasta começa com ponto e fica escondida, por isso o atalho.
 - Windows: cole o caminho no campo **Nome do arquivo** e clique em **Abrir**.
+
+**Fechou o Terminal antes de copiar o caminho?** Não precisa refazer nada. O caminho é sempre o mesmo:
+
+- Mac: `~/.figma-console-mcp/plugin/manifest.json`
+- Windows: `%USERPROFILE%\.figma-console-mcp\plugin\manifest.json`
+
+Cole esse texto do mesmo jeito. Se preferir, rode o comando do passo 2 de novo e aperte Enter quando ele perguntar da chave: em segundos ele mostra o caminho e abre a pasta.
 
 Na tela: o plugin **Figma Desktop Bridge** passa a aparecer em Plugins > Development.
 
@@ -160,19 +167,23 @@ Voluntários: o roteiro de vocês está em [voluntarios.md](voluntarios.md).
 
 Funciona também. É o mesmo servidor, com outro agente na ponta: o cabo USB-C. O Thiago usa assim no Mac dele. É uma alternativa; o workshop segue com o chat do Claude Desktop.
 
-1. Faça as partes 1 e 2 do mesmo jeito. O instalador prepara o plugin mesmo que o seu agente seja o Codex. Sem o Claude Desktop, ele avisa e deixa continuar.
-2. Acrescente a conexão no arquivo `~/.codex/config.toml`, no bloco `[mcp_servers.figma-console]`. O formato fica assim, com a sua chave no lugar de `figd_...`:
+1. Abra o Codex uma vez antes, para ele criar a pasta `~/.codex`.
+2. Faça as partes 1 e 2 do mesmo jeito. O instalador acha o Codex sozinho e grava a conexão também no `~/.codex/config.toml`, sem mexer no resto do arquivo. Na tela aparece `[ok] Codex também ligado em ...`. Não apareceu? Rode o comando de novo com ` --codex` no fim. Sem o Claude Desktop, ele avisa e deixa continuar.
+3. Feche o Codex por completo e abra de novo, com o plugin rodando no Figma. Mande o mesmo teste da parte 2.
+
+Quer conferir ou fazer à mão? O bloco que o instalador grava é este, com a sua chave no lugar de `figd_...`. O `startup_timeout_sec` importa: na primeira vez o `npx` baixa o servidor, e o tempo padrão do Codex (10 segundos) acaba antes.
 
 ```
 [mcp_servers.figma-console]
 command = "npx"
 args = ["-y", "figma-console-mcp@1.35.0"]
+startup_timeout_sec = 120
 env = { FIGMA_ACCESS_TOKEN = "figd_...", ENABLE_MCP_APPS = "true" }
 ```
 
-Antes de salvar, confira o comando, a versão e os nomes do `env` no ZIP, no arquivo `instalar.mjs` (função `ourEntry`). Vale o que está lá. No Windows, o instalador usa `cmd` com `/c npx -y ...`; confira no mesmo trecho.
+No Windows, o comando é `cmd` e os args são `["/c", "npx", "-y", "figma-console-mcp@1.35.0"]`. No terminal, `codex mcp list` mostra `figma-console` como `enabled` quando está tudo certo.
 
-3. Abra o Codex de novo, com o plugin rodando no Figma, e mande o mesmo teste da parte 2. No Codex, as regras do `DESIGN.md` podem morar num `AGENTS.md` na pasta do projeto (veja "Regras escritas", abaixo).
+4. No Codex, as regras do `DESIGN.md` podem morar num `AGENTS.md` na pasta do projeto (veja "Regras escritas", abaixo).
 
 Esse caminho não foi ensaiado com participantes. Travou? Volte para o Claude Desktop.
 

@@ -34,7 +34,7 @@ Para quem não terminou a parte 2 do preparo em casa. O guia do participante tem
 **O que conferir, nesta ordem:**
 
 1. **Os três programas.** Figma Desktop (o app, não o navegador), Claude Desktop logado na conta da pessoa, e `node -v` no Terminal ou no PowerShell mostrando v18 ou maior.
-2. **O instalador.** O comando do guia, pela tag `v1` do `figma-ia-na-pratica` (no Windows, `npx.cmd`). A chave é criada **pela própria pessoa**, na conta dela: 7 dias, só leitura em File content, com um nome fácil de achar, como `workshop fortaleza`. Vocês não digitam nem veem a chave.
+2. **O instalador.** O comando do guia, pela tag `v2` do `figma-ia-na-pratica` (no Windows, `npx.cmd`). A chave é criada **pela própria pessoa**, na conta dela: 7 dias, só leitura em File content, com um nome fácil de achar, como `workshop fortaleza`. Vocês não digitam nem veem a chave.
    - Disse que já existe uma conexão com o mesmo nome, ou que a configuração não é válida: leiam juntos o que seria substituído. A pessoa decide se digita `sim`. Na dúvida, não.
    - Disse que a instalação NÃO terminou: seguir os passos que ele mostra e rodar de novo. Ele reaproveita a chave.
    - O comando não baixa: digite `node` e um espaço, arraste o `instalar.mjs` da pasta do ZIP para a janela e aperte Enter. Ainda precisa de internet.
@@ -84,7 +84,7 @@ A conta gratuita do Claude tem limite, e ele varia com o dia; não há número p
 1. Faça o preparo inteiro do guia do participante (partes 1 e 2, e a 3 se quiser) e os passos da sala na sua conta gratuita, até abrir o `index.html` no navegador. Quem já passou pelo erro destrava o outro mais rápido.
 2. **Quem tem Windows:** faça a conexão, o prompt 1 e o passo do `index.html` no Windows e conte ao Thiago se o plugin mostrou "Connected", se o Claude disse o nome do arquivo, se o prompt 1 escreveu no Figma, se a importação do plugin funcionou colando o caminho no campo "Nome do arquivo" e como o `index.html` foi salvo. O instalador passa nos testes automáticos de Windows, mas ninguém ensaiou o fluxo inteiro numa máquina Windows de verdade.
 3. **O pendrive tem dono.** Um de vocês confirma no grupo que leva. Quem confirmar:
-   - baixa o ZIP de https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v1.zip e copia **três coisas** para o pendrive: a pasta `handoff`, a pasta `meu-site-kit` e o guia em arquivo (`README.md`);
+   - baixa o ZIP de https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v2.zip e copia **três coisas** para o pendrive: a pasta `handoff`, a pasta `meu-site-kit` e o guia em arquivo (`README.md`);
    - leva pendrive USB comum **e** um jeito de ligar em USB-C;
    - testa com o wifi desligado: `handoff/Card.html` abre com cor direto do pendrive, e o `meus-dados.txt`, o `DESIGN.md` e o guia abrem;
    - responde no grupo "pendrive testado".

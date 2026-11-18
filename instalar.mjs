@@ -2,7 +2,7 @@
 /*
  * Instalador de um comando só do workshop (Mac e Windows, Node 18+).
  *
- *   npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v1.tar.gz
+ *   npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v2.tar.gz
  *   (Windows: npx.cmd no lugar de npx. Plano B: baixar o ZIP do repo e rodar node instalar.mjs.
  *   O plano B dispensa baixar o instalador, mas o passo 4 ainda baixa a conexão pelo npm.)
  *
@@ -292,6 +292,69 @@ function writeConfig(token, path = configPath()) {
   return { path, others, wasInvalid: !!state.invalid, backupPath }
 }
 
+// Codex: lê ~/.codex/config.toml (ou $CODEX_HOME). Só mexe se o Codex existe na máquina
+// ou com --codex. Troca apenas o bloco [mcp_servers.figma-console] e preserva o resto.
+function codexConfigPath() {
+  if (process.env.CODEX_CONFIG_PATH) return process.env.CODEX_CONFIG_PATH
+  return join(process.env.CODEX_HOME || join(homedir(), '.codex'), 'config.toml')
+}
+
+function hasCodex() {
+  if (args.has('--codex')) return true
+  if (existsSync(dirname(codexConfigPath()))) return true
+  if (IS_MAC) return anyExists(['/Applications/Codex.app', join(homedir(), 'Applications', 'Codex.app')])
+  return false
+}
+
+function codexBlock(token) {
+  const mine = ourEntry(token)
+  const q = (s) => JSON.stringify(String(s)) // string TOML básica: mesmas regras de escape do JSON para estes valores
+  return [
+    `[mcp_servers.${SERVER_KEY}]`,
+    `command = ${q(mine.command)}`,
+    `args = [${mine.args.map(q).join(', ')}]`,
+    // O npx baixa o servidor na primeira vez; o padrão do Codex (10 s) costuma estourar antes.
+    'startup_timeout_sec = 120',
+    `env = { FIGMA_ACCESS_TOKEN = ${q(token)}, ENABLE_MCP_APPS = "true" }`,
+    '',
+  ].join('\n')
+}
+
+function writeCodexConfig(token, path = codexConfigPath()) {
+  const existed = existsSync(path)
+  const raw = existed ? readFileSync(path, 'utf8') : ''
+  let backupPath = ''
+  if (existed) {
+    backupPath = `${path}.bak-${new Date().toISOString().replace(/[:.]/g, '-')}`
+    copyFileSync(path, backupPath)
+    try {
+      chmodSync(backupPath, 0o600)
+    } catch {
+      /* Windows ignora o modo */
+    }
+  }
+  // Remove o nosso bloco antigo (e subtabelas dele, como .env) até o próximo cabeçalho de outra tabela.
+  const lines = raw.split(/\r?\n/)
+  const kept = []
+  let skipping = false
+  const ours = new RegExp(`^\\s*\\[\\s*mcp_servers\\.(${SERVER_KEY}|"${SERVER_KEY}")(\\.[^\\]]*)?\\s*\\]`)
+  for (const line of lines) {
+    if (/^\s*\[/.test(line)) skipping = ours.test(line)
+    if (!skipping) kept.push(line)
+  }
+  const replaced = kept.length !== lines.length
+  const body = kept.join('\n').replace(/\s*$/, '')
+  const out = `${body ? `${body}\n\n` : ''}${codexBlock(token)}`
+  mkdirSync(dirname(path), { recursive: true })
+  writeFileSync(path, out)
+  try {
+    chmodSync(path, 0o600)
+  } catch {
+    /* Windows ignora o modo */
+  }
+  return { path, backupPath, replaced }
+}
+
 // Encerra o MCP de aquecimento e os filhos dele: um processo esquecido seguraria
 // a porta 9223 e o plugin conectaria nele em vez do Claude Desktop.
 function stopTree(child) {
@@ -410,6 +473,12 @@ async function main() {
     if (result.backupPath) ok(`cópia do config anterior: ${result.backupPath}`)
     if (result.others.length) ok(`outros conectores preservados: ${result.others.join(', ')}`)
   }
+  const codex = hasCodex()
+  if (codex) {
+    const r = writeCodexConfig(token)
+    ok(`Codex também ligado em ${r.path}${r.replaced ? ' (troquei só o bloco figma-console)' : ''}`)
+    if (r.backupPath) ok(`cópia do config anterior do Codex: ${r.backupPath}`)
+  }
 
   step(4, 'Preparando o plugin do Figma')
   const manifest = pluginManifestPath()
@@ -440,7 +509,11 @@ async function main() {
   console.log('  C. Abra o arquivo do workshop no Figma e rode o plugin Figma Desktop Bridge. Deixe ele aberto.')
   console.log('  D. No Claude Desktop, numa conversa nova: "Verifique o status da conexão com o Figma".')
   console.log('     Deu certo quando o Claude disser o NOME do arquivo que está aberto no Figma.')
-  console.log('     Só isso prova a conexão. O "ok" deste instalador não prova.\n')
+  console.log('     Só isso prova a conexão. O "ok" deste instalador não prova.')
+  if (codex) console.log('     Usa Codex? Feche o Codex por completo, abra de novo e mande o mesmo pedido.')
+  console.log('\n  Fechou esta janela antes de importar o plugin? O caminho é sempre este:')
+  console.log(`     ${IS_WIN ? '%USERPROFILE%\\.figma-console-mcp\\plugin\\manifest.json' : '~/.figma-console-mcp/plugin/manifest.json'}`)
+  console.log('     Ou rode o mesmo comando de novo: aperte Enter na chave e ele mostra tudo outra vez.\n')
   revealFile(manifest)
   console.log('Travou em casa? Chegue às 17h30 na mesa de instalação. Se não der, no dia você acompanha a leitura pelo telão.\n')
 }
