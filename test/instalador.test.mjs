@@ -109,5 +109,18 @@ c = (() => { try { return read(cfgOf(h)) } catch { return null } })()
 check('R conserta texto sobrando no fim', r.code === 0 && c?.mcpServers?.outro && c?.mcpServers?.['figma-console']?.env?.FIGMA_ACCESS_TOKEN === TOK && c?.preferences?.a === '{ } "' && /texto sobrando/.test(r.out), r.out)
 check('R não deixa arquivo temporário', !readdirSync(join(h, 'cfg')).some((f) => f.includes('.tmp-')))
 
+// P. O caso real provável: Claude já tinha o próprio config e a pessoa colou o bloco do
+// plano B no fim. A chave do bloco colado vale sem pedir de novo, e nada do Claude se perde.
+h = home()
+{
+  const entry = { command: WIN ? 'cmd' : 'npx', args: WIN ? ['/c', 'npx', '-y', 'figma-console-mcp@1.35.0'] : ['-y', 'figma-console-mcp@1.35.0'], env: { FIGMA_ACCESS_TOKEN: TOK, ENABLE_MCP_APPS: 'true' } }
+  put(h, '\uFEFF' + JSON.stringify({ preferences: { tema: 'escuro' }, mcpServers: { outro: { command: 'x' } } }, null, 2) + '\n' + JSON.stringify({ mcpServers: { 'figma-console': entry } }, null, 2) + '\n')
+}
+r = run(h)
+c = (() => { try { return read(cfgOf(h)) } catch { return null } })()
+check('P bloco colado no fim: junta sem perder nada', r.code === 0 && c?.preferences?.tema === 'escuro' && c?.mcpServers?.outro && c?.mcpServers?.['figma-console']?.env?.FIGMA_ACCESS_TOKEN === TOK, r.out)
+check('P não pede chave nova', /mesma/.test(r.out) && !/Vou abrir as configurações do Figma/.test(r.out), r.out)
+check('P guarda cópia .bak', readdirSync(join(h, 'cfg')).some((f) => f.includes('.bak-')))
+
 console.log(fails ? `\n${fails} falha(s)` : '\nTudo passou')
 process.exit(fails ? 1 : 0)

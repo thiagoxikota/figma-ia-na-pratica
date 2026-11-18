@@ -47,7 +47,7 @@ Notebook da empresa que não deixa instalar programa não serve para a parte 2. 
 1. **Conta gratuita do Figma:** https://www.figma.com/signup (prefira a pessoal, não a do trabalho).
 2. **Conta gratuita do Claude:** https://claude.ai
 3. **Duplique o arquivo do exercício** para a sua conta: https://www.figma.com/community/file/1659374868260259462 . O molde fica na primeira página, **"Minha hero"**, no frame **"Minha hero"**. Ao lado dele está o **"Exemplo pronto: Thiago"**, a mesma hero já personalizada, para você ver aonde vai chegar. Duplicou antes e não tem essa página? Duplique de novo: ela é nova.
-4. **Baixe o ZIP:** https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v4.zip . Descompacte e copie para a Área de Trabalho:
+4. **Baixe o ZIP:** https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v5.zip . Descompacte e copie para a Área de Trabalho:
    - a pasta `meu-site-kit`. Ela tem o `meus-dados.txt`, o `DESIGN.md` (as regras do seu site), a pasta `reserva` e a pasta `meu-site`, vazia, onde o site vai entrar;
    - a pasta `handoff`, para o workshop seguinte, às 20h.
 5. **Preencha o `meus-dados.txt`.** Abra no TextEdit (Mac) ou no Bloco de Notas (Windows) e troque o exemplo de cada linha pelo seu:
@@ -85,13 +85,13 @@ Abra o Figma Desktop e o Claude Desktop, logados. No Terminal ou no PowerShell, 
 Mac:
 
 ```
-npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v4.tar.gz
+npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v5.tar.gz
 ```
 
 Windows (repare no `.cmd`, que evita o bloqueio de scripts do PowerShell):
 
 ```
-npx.cmd -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v4.tar.gz
+npx.cmd -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v5.tar.gz
 ```
 
 Na tela, nesta ordem:
@@ -406,7 +406,17 @@ Use só se o instalador falhar. O resultado é o mesmo: a conexão no Claude Des
 
 **1. A chave do Figma.** Crie como no passo 2 da parte 2: Settings > Security > Personal access tokens, 7 dias, só leitura em File content. Copie a chave `figd_...`.
 
-**2. A conexão no Claude Desktop.** Abra o Claude Desktop. Menu **Settings > Developer > Edit Config**. Ele mostra o arquivo `claude_desktop_config.json`. Abra esse arquivo num editor de texto (TextEdit em texto simples no Mac, Bloco de Notas no Windows) e cole o bloco abaixo, trocando `figd_...` pela sua chave.
+**2. A conexão no Claude Desktop.** Primeiro **feche o Claude Desktop por completo** (Mac: Cmd+Q; Windows: clique direito no ícone perto do relógio > Sair). Aberto, ele reescreve o arquivo e pode estragar a sua edição.
+
+Abra o arquivo `claude_desktop_config.json` num editor de texto (TextEdit em texto simples no Mac, Bloco de Notas no Windows):
+
+- Mac: Finder, Cmd+Shift+G, cole `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: tecla Windows+R, cole `notepad %APPDATA%\Claude\claude_desktop_config.json` e Enter
+
+**Antes de mexer, salve uma cópia do arquivo** (Salvar como, com outro nome). Depois, olhe o que tem dentro:
+
+- **Vazio, ou só `{}`:** apague tudo e cole o bloco do seu sistema, trocando `figd_...` pela sua chave.
+- **Já tem texto:** **não cole no fim.** Um segundo bloco depois do primeiro quebra o arquivo inteiro e o Claude abre com "Não foi possível carregar as configurações do aplicativo". Prefira o instalador (pelo ZIP, `node instalar.mjs`), que junta tudo sozinho. Sem instalador: procure `"mcpServers"`. Se existir, cole só o trecho `"figma-console": { ... }` dentro dele, separado do anterior por vírgula. Se não existir, cole na **segunda linha** do arquivo, logo depois da primeira `{`, o trecho `"mcpServers": { "figma-console": { ... } },` com a vírgula no fim.
 
 Mac:
 
@@ -436,9 +446,7 @@ Windows (o Claude Desktop não abre o `npx` direto, por isso o `cmd`):
 }
 ```
 
-O arquivo já tinha outras conexões? Não apague nada: cole só o trecho `"figma-console": { ... }` dentro do `"mcpServers"` que já existe, separado do anterior por vírgula.
-
-**3. Reinicie o Claude Desktop.** Feche por completo (Mac: Cmd+Q; Windows: saia também pelo ícone perto do relógio) e abra de novo. Na primeira vez ele baixa a ponte: espere de 1 a 2 minutos. Em Settings > Developer, `figma-console` aparece como **running**. Se aparecer erro, confira vírgulas e aspas do bloco.
+**3. Reinicie o Claude Desktop.** Feche por completo (Mac: Cmd+Q; Windows: saia também pelo ícone perto do relógio) e abra de novo. Na primeira vez ele baixa a ponte: espere de 1 a 2 minutos. Em Settings > Developer, `figma-console` aparece como **running**. Se aparecer erro, ou "Não foi possível carregar as configurações", o arquivo ficou com vírgula, aspas ou bloco a mais: volte a cópia salva ou rode o instalador v5, que conserta o arquivo mantendo a chave.
 
 **4. O plugin no Figma.** Quando a ponte liga pela primeira vez, ela cria o plugin nesta pasta:
 
@@ -461,7 +469,7 @@ No Figma Desktop: **Plugins > Development > Import plugin from manifest** e cole
 | O instalador diz que já existe uma conexão com o mesmo nome, ou que a configuração não é válida | Ele não mexeu em nada. Na dúvida, não digite `sim`: mostre a um voluntário no dia, na mesa das 17h30 ou na sala |
 | O instalador diz que a instalação NÃO terminou | Siga os passos que ele mostra e rode de novo. Ele reaproveita a chave que você já colou |
 | A janelinha do plugin fica em "Looking for your AI app…" ou "Not connected" | Feche o plugin e rode de novo. O Claude Desktop foi fechado por completo depois da instalação? Desligue a VPN |
-| O Claude Desktop abre com "Não foi possível carregar as configurações do aplicativo" ("Unexpected non-whitespace character after JSON") | O arquivo de configuração ficou com texto sobrando, porque o Claude estava aberto durante a instalação. Rode o comando do instalador (v4) de novo: ele fecha o Claude, conserta o arquivo mantendo a chave e guarda uma cópia .bak |
+| O Claude Desktop abre com "Não foi possível carregar as configurações do aplicativo" ("Unexpected non-whitespace character after JSON") | O arquivo de configuração ficou com texto sobrando, porque o Claude estava aberto durante a instalação. Rode o comando do instalador (v5) de novo: ele fecha o Claude, conserta o arquivo mantendo a chave e guarda uma cópia .bak |
 | O Claude não diz o nome do arquivo | Figma Desktop (não o navegador) com a sua cópia aberta e o plugin Figma Desktop Bridge rodando. Ele cai se o Figma dormir ou o arquivo fechar: rode de novo |
 | A chave venceu ou foi revogada | Crie outra (7 dias, só leitura em File content) e rode o instalador de novo |
 | Não tenho a página "Minha hero" | A sua cópia é antiga. Duplique o arquivo da Community de novo |

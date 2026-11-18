@@ -2,7 +2,7 @@
 /*
  * Instalador de um comando só do workshop (Mac e Windows, Node 18+).
  *
- *   npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v4.tar.gz
+ *   npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v5.tar.gz
  *   (Windows: npx.cmd no lugar de npx. Plano B: baixar o ZIP do repo e rodar node instalar.mjs.
  *   O plano B dispensa baixar o instalador, mas o passo 4 ainda baixa a conexão pelo npm.)
  *
@@ -262,19 +262,39 @@ function writeAtomic(path, text) {
 
 // O Claude Desktop aberto reescreve o config com o que tem na memória e pode
 // apagar a nossa entrada ou deixar texto sobrando. Por isso fechamos antes de gravar.
-function claudeRunning() {
-  // Testes (config falso em MCP_CONFIG_PATH ou INSTALAR_SEM_ABRIR=1) nunca mexem no Claude da máquina.
-  if (process.env.INSTALAR_IGNORAR_CLAUDE === '1' || process.env.MCP_CONFIG_PATH || NO_OPEN) return false
+const TEST_MODE = () => process.env.INSTALAR_IGNORAR_CLAUDE === '1' || !!process.env.MCP_CONFIG_PATH || NO_OPEN
+
+// Windows: o Claude Code (linha de comando) também se chama claude.exe. Só contam os
+// processos do Claude Desktop, reconhecidos pela pasta de instalação.
+const DESKTOP_PATH_WIN = /\\AnthropicClaude\\|\\WindowsApps\\[^\\]*Claude[^\\]*\\|\\Programs\\Claude\\/i
+
+function winClaudeProcs() {
+  const ps = 'Get-Process -Name claude -ErrorAction SilentlyContinue | ForEach-Object { "$($_.Id)|$($_.Path)" }'
+  const r = spawnSync('powershell', ['-NoProfile', '-NonInteractive', '-Command', ps], { encoding: 'utf8' })
+  const rows = (r.stdout || '').split(/\r?\n/).filter(Boolean).map((l) => {
+    const [pid, ...rest] = l.split('|')
+    return { pid: Number(pid), path: rest.join('|').trim() }
+  })
+  return {
+    desktop: rows.filter((x) => x.path && DESKTOP_PATH_WIN.test(x.path)),
+    unknown: rows.filter((x) => !x.path),
+  }
+}
+
+// 'desktop' = Claude Desktop aberto; 'unknown' = há um claude.exe que não sei classificar; null = fechado.
+function claudeState() {
+  if (TEST_MODE()) return null
   try {
     if (IS_WIN) {
-      const r = spawnSync('tasklist', ['/FI', 'IMAGENAME eq claude.exe', '/NH'], { encoding: 'utf8' })
-      return /claude\.exe/i.test(r.stdout || '')
+      const p = winClaudeProcs()
+      if (p.desktop.length) return 'desktop'
+      return p.unknown.length ? 'unknown' : null
     }
-    if (IS_MAC) return spawnSync('pgrep', ['-x', 'Claude']).status === 0
+    if (IS_MAC) return spawnSync('pgrep', ['-x', 'Claude']).status === 0 ? 'desktop' : null
   } catch {
     /* sem como saber: segue */
   }
-  return false
+  return null
 }
 
 function sleep(ms) {
@@ -282,19 +302,30 @@ function sleep(ms) {
 }
 
 async function closeClaude() {
-  if (!claudeRunning()) return
+  const QUIT = IS_MAC ? 'Cmd+Q' : 'clique direito no ícone do Claude perto do relógio > Sair (Quit)'
+  let state = claudeState()
+  if (!state) return
+  if (state === 'unknown') {
+    // Não fecho o que não sei se é o Claude Desktop: pode ser o Claude Code.
+    warn('Pode haver um Claude Desktop aberto. Ele precisa estar fechado enquanto eu gravo a configuração.')
+    await askEnter(`  Se o Claude Desktop estiver aberto, feche por completo (${QUIT}). Depois aperte Enter...`)
+    await sleep(1000)
+    return
+  }
   warn('O Claude Desktop está aberto. Ele precisa estar fechado enquanto eu gravo a configuração.')
   await askEnter('  Aperte Enter e eu fecho o Claude Desktop agora (você abre de novo no final)...')
-  if (IS_WIN) spawnSync('taskkill', ['/IM', 'claude.exe', '/F'], { stdio: 'ignore' })
-  else if (IS_MAC) spawnSync('osascript', ['-e', 'quit app "Claude"'], { stdio: 'ignore' })
-  for (let i = 0; i < 20 && claudeRunning(); i += 1) await sleep(500)
-  if (claudeRunning() && IS_MAC) {
+  if (IS_WIN) {
+    for (const { pid } of winClaudeProcs().desktop) spawnSync('taskkill', ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore' })
+  } else if (IS_MAC) spawnSync('osascript', ['-e', 'quit app "Claude"'], { stdio: 'ignore' })
+  for (let i = 0; i < 20 && claudeState() === 'desktop'; i += 1) await sleep(500)
+  if (claudeState() === 'desktop' && IS_MAC) {
     spawnSync('pkill', ['-x', 'Claude'], { stdio: 'ignore' })
-    for (let i = 0; i < 10 && claudeRunning(); i += 1) await sleep(500)
+    for (let i = 0; i < 10 && claudeState() === 'desktop'; i += 1) await sleep(500)
   }
-  if (claudeRunning()) {
+  state = claudeState()
+  if (state === 'desktop') {
     warn('Não consegui fechar o Claude Desktop.')
-    console.log(`  Feche por completo (${IS_MAC ? 'Cmd+Q' : 'clique direito no ícone perto do relógio > Quit'}) e rode este comando de novo.\n`)
+    console.log(`  Feche por completo (${QUIT}) e rode este comando de novo.\n`)
     process.exit(5)
   }
   await sleep(1000) // deixa o Claude terminar de salvar antes de lermos o arquivo
@@ -326,14 +357,52 @@ function leadingJsonEnd(raw) {
   return -1
 }
 
+// Lê vários objetos JSON colados um depois do outro (ex.: o bloco do plano B colado no
+// fim de um config que já existia). Devolve null se sobrar algo que não seja objeto.
+function splitObjects(raw) {
+  const out = []
+  let rest = raw
+  while (rest.trim()) {
+    rest = rest.trim()
+    if (!rest.startsWith('{')) return null
+    const end = leadingJsonEnd(rest)
+    if (end < 0) return null
+    let obj
+    try {
+      obj = JSON.parse(rest.slice(0, end))
+    } catch {
+      return null
+    }
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return null
+    out.push(obj)
+    rest = rest.slice(end)
+  }
+  return out
+}
+
+// Junta os pedaços: o primeiro manda no resto; mcpServers soma todos (o mais novo vence por nome).
+function mergeObjects(list) {
+  const cfg = { ...list[0] }
+  const servers = {}
+  for (const o of list) {
+    if (o.mcpServers && typeof o.mcpServers === 'object') Object.assign(servers, o.mcpServers)
+    for (const k of Object.keys(o)) if (k !== 'mcpServers' && !(k in cfg)) cfg[k] = o[k]
+  }
+  if (Object.keys(servers).length) cfg.mcpServers = servers
+  return cfg
+}
+
 function readConfig(p) {
   if (!existsSync(p)) return { existed: false, cfg: {} }
-  const raw = readFileSync(p, 'utf8').replace(/^\uFEFF/, '').trim()
+  const raw = readFileSync(p, 'utf8').replace(/^﻿/, '').trim()
   if (raw === '') return { existed: true, cfg: {} }
   try {
     return { existed: true, cfg: JSON.parse(raw) }
   } catch {
-    // Texto sobrando depois de um JSON completo: guarda o JSON da frente.
+    // Objetos colados em sequência, ou chaves sobrando no fim: recupera o que for objeto.
+    const parts = splitObjects(raw)
+    if (parts && parts.length) return { existed: true, cfg: mergeObjects(parts), repaired: true }
+    // Sobra que não é objeto (ex.: "}\n}" a mais): fica com o primeiro objeto completo.
     const end = raw.startsWith('{') ? leadingJsonEnd(raw) : -1
     if (end > 0) {
       try {

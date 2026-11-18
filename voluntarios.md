@@ -38,7 +38,7 @@ Para quem não terminou a parte 2 do preparo em casa. O guia do participante tem
    - Disse que já existe uma conexão com o mesmo nome, ou que a configuração não é válida: leiam juntos o que seria substituído. A pessoa decide se digita `sim`. Na dúvida, não.
    - Disse que a instalação NÃO terminou: seguir os passos que ele mostra e rodar de novo. Ele reaproveita a chave.
    - O comando não baixa: digite `node` e um espaço, arraste o `instalar.mjs` da pasta do ZIP para a janela e aperte Enter. Ainda precisa de internet.
-3. **O Claude Desktop fechado por completo e aberto de novo.** Mac: Cmd+Q. Windows: sair também pelo ícone perto do relógio. Desde a v4 o instalador fecha o Claude sozinho antes de gravar. Se aparecer "Não foi possível carregar as configurações do aplicativo", rode o instalador v4 de novo: ele conserta o arquivo e mantém a chave.
+3. **O Claude Desktop fechado por completo e aberto de novo.** Mac: Cmd+Q. Windows: sair também pelo ícone perto do relógio. Desde a v5 o instalador fecha o Claude sozinho antes de gravar. Se aparecer "Não foi possível carregar as configurações do aplicativo", rode o instalador v5 de novo: ele conserta o arquivo e mantém a chave.
 4. **O plugin.** Figma Desktop com a cópia do arquivo aberta, Plugins > Development > Import plugin from manifest, o caminho que o instalador copiou (Mac: Cmd+Shift+G e colar; Windows: colar no campo "Nome do arquivo" e Abrir). Depois rodar o **Figma Desktop Bridge** e deixar a janela aberta. **Pronto quando a janelinha mostra "Connected".**
 5. **O teste (o alô).** Frame "Minha hero" selecionado. No Claude Desktop, conversa nova, com o prompt do alô do guia: o nome do arquivo e o texto do botão. **Pronto quando o Claude diz o nome do arquivo e "Fale comigo", o texto do botão no molde.** O `[ok]` do instalador não conta.
 
@@ -86,7 +86,7 @@ A conta gratuita do Claude tem limite, e ele varia com o dia; não há número p
 1. Faça o preparo inteiro do guia do participante (partes 1 e 2, e a 3 se quiser) e os passos da sala na sua conta gratuita, até abrir o `index.html` no navegador. Quem já passou pelo erro destrava o outro mais rápido.
 2. **Quem tem Windows:** faça a conexão, o prompt 1 e o passo do `index.html` no Windows e conte ao Thiago se o plugin mostrou "Connected", se o Claude disse o nome do arquivo, se o prompt 1 escreveu no Figma, se a importação do plugin funcionou colando o caminho no campo "Nome do arquivo" e como o `index.html` foi salvo. O instalador passa nos testes automáticos de Windows, mas ninguém ensaiou o fluxo inteiro numa máquina Windows de verdade.
 3. **O pendrive tem dono.** Um de vocês confirma no grupo que leva. Quem confirmar:
-   - baixa o ZIP de https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v4.zip e copia **três coisas** para o pendrive: a pasta `handoff`, a pasta `meu-site-kit` e o guia em arquivo (`README.md`);
+   - baixa o ZIP de https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v5.zip e copia **três coisas** para o pendrive: a pasta `handoff`, a pasta `meu-site-kit` e o guia em arquivo (`README.md`);
    - leva pendrive USB comum **e** um jeito de ligar em USB-C;
    - testa com o wifi desligado: `handoff/Card.html` abre com cor direto do pendrive, e o `meus-dados.txt`, o `DESIGN.md` e o guia abrem;
    - responde no grupo "pendrive testado".
