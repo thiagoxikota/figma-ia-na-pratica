@@ -1,6 +1,6 @@
 {
   "name": "figma-ia-na-pratica",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Instalador e kit do workshop Figma + IA, na prática (Fortaleza, 18/11/2026)",
   "type": "module",
   "bin": {

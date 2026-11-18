@@ -2,7 +2,7 @@
 /*
  * Instalador de um comando só do workshop (Mac e Windows, Node 18+).
  *
- *   npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v3.tar.gz
+ *   npx -y https://github.com/thiagoxikota/figma-ia-na-pratica/archive/refs/tags/v4.tar.gz
  *   (Windows: npx.cmd no lugar de npx. Plano B: baixar o ZIP do repo e rodar node instalar.mjs.
  *   O plano B dispensa baixar o instalador, mas o passo 4 ainda baixa a conexão pelo npm.)
  *
@@ -27,7 +27,7 @@
  *   env -i PATH="$PATH" HOME=/tmp/casa-teste MCP_CONFIG_PATH=/tmp/casa-teste/x.json FIGMA_ACCESS_TOKEN=figd_TESTE INSTALAR_SEM_ABRIR=1 node instalar.mjs --sem-plugin
  */
 import { spawn, spawnSync } from 'node:child_process'
-import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
 import { homedir, platform } from 'node:os'
 import { dirname, join } from 'node:path'
 import readline from 'node:readline'
@@ -243,13 +243,106 @@ async function confirmConflict(paths) {
   }
 }
 
+// Grava num arquivo ao lado e troca de uma vez: nunca sobra pedaço do conteúdo antigo.
+function writeAtomic(path, text) {
+  const tmp = `${path}.tmp-${process.pid}`
+  writeFileSync(tmp, text)
+  try {
+    renameSync(tmp, path)
+  } catch {
+    // Windows com o arquivo preso por outro programa: grava direto (writeFileSync trunca).
+    writeFileSync(path, text)
+    try {
+      unlinkSync(tmp)
+    } catch {
+      /* já foi */
+    }
+  }
+}
+
+// O Claude Desktop aberto reescreve o config com o que tem na memória e pode
+// apagar a nossa entrada ou deixar texto sobrando. Por isso fechamos antes de gravar.
+function claudeRunning() {
+  // Testes (config falso em MCP_CONFIG_PATH ou INSTALAR_SEM_ABRIR=1) nunca mexem no Claude da máquina.
+  if (process.env.INSTALAR_IGNORAR_CLAUDE === '1' || process.env.MCP_CONFIG_PATH || NO_OPEN) return false
+  try {
+    if (IS_WIN) {
+      const r = spawnSync('tasklist', ['/FI', 'IMAGENAME eq claude.exe', '/NH'], { encoding: 'utf8' })
+      return /claude\.exe/i.test(r.stdout || '')
+    }
+    if (IS_MAC) return spawnSync('pgrep', ['-x', 'Claude']).status === 0
+  } catch {
+    /* sem como saber: segue */
+  }
+  return false
+}
+
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms))
+}
+
+async function closeClaude() {
+  if (!claudeRunning()) return
+  warn('O Claude Desktop está aberto. Ele precisa estar fechado enquanto eu gravo a configuração.')
+  await askEnter('  Aperte Enter e eu fecho o Claude Desktop agora (você abre de novo no final)...')
+  if (IS_WIN) spawnSync('taskkill', ['/IM', 'claude.exe', '/F'], { stdio: 'ignore' })
+  else if (IS_MAC) spawnSync('osascript', ['-e', 'quit app "Claude"'], { stdio: 'ignore' })
+  for (let i = 0; i < 20 && claudeRunning(); i += 1) await sleep(500)
+  if (claudeRunning() && IS_MAC) {
+    spawnSync('pkill', ['-x', 'Claude'], { stdio: 'ignore' })
+    for (let i = 0; i < 10 && claudeRunning(); i += 1) await sleep(500)
+  }
+  if (claudeRunning()) {
+    warn('Não consegui fechar o Claude Desktop.')
+    console.log(`  Feche por completo (${IS_MAC ? 'Cmd+Q' : 'clique direito no ícone perto do relógio > Quit'}) e rode este comando de novo.\n`)
+    process.exit(5)
+  }
+  await sleep(1000) // deixa o Claude terminar de salvar antes de lermos o arquivo
+  ok('Claude Desktop fechado')
+}
+
+// Acha o fim do primeiro valor JSON (objeto) respeitando strings. Serve para recuperar
+// um config com texto sobrando depois do fim, que o Claude Desktop recusa inteiro
+// ("Unexpected non-whitespace character after JSON"), visto no Windows em 18/11/2026.
+function leadingJsonEnd(raw) {
+  let depth = 0
+  let inStr = false
+  let esc = false
+  for (let i = 0; i < raw.length; i += 1) {
+    const ch = raw[i]
+    if (inStr) {
+      if (esc) esc = false
+      else if (ch === '\\') esc = true
+      else if (ch === '"') inStr = false
+      continue
+    }
+    if (ch === '"') inStr = true
+    else if (ch === '{' || ch === '[') depth += 1
+    else if (ch === '}' || ch === ']') {
+      depth -= 1
+      if (depth === 0) return i + 1
+    }
+  }
+  return -1
+}
+
 function readConfig(p) {
   if (!existsSync(p)) return { existed: false, cfg: {} }
-  const raw = readFileSync(p, 'utf8').trim()
+  const raw = readFileSync(p, 'utf8').replace(/^\uFEFF/, '').trim()
   if (raw === '') return { existed: true, cfg: {} }
   try {
     return { existed: true, cfg: JSON.parse(raw) }
   } catch {
+    // Texto sobrando depois de um JSON completo: guarda o JSON da frente.
+    const end = raw.startsWith('{') ? leadingJsonEnd(raw) : -1
+    if (end > 0) {
+      try {
+        const cfg = JSON.parse(raw.slice(0, end))
+        if (cfg && typeof cfg === 'object' && !Array.isArray(cfg)) return { existed: true, cfg, repaired: true }
+      } catch {
+        /* não era só sobra: segue como inválido */
+      }
+    }
     return { existed: true, invalid: true, cfg: {} }
   }
 }
@@ -282,14 +375,16 @@ function writeConfig(token, path = configPath()) {
   const out = `${JSON.stringify(cfg, null, 2)}\n`
   JSON.parse(out)
   mkdirSync(dirname(path), { recursive: true })
-  writeFileSync(path, out)
+  writeAtomic(path, out)
   try {
     chmodSync(path, 0o600) // o arquivo guarda a chave: só o dono da conta lê
   } catch {
     /* Windows ignora o modo */
   }
+  // Confere o que ficou no disco: o Claude Desktop recusa o arquivo inteiro se algo sobrar.
+  JSON.parse(readFileSync(path, 'utf8'))
   const others = Object.keys(cfg.mcpServers).filter((k) => k !== SERVER_KEY)
-  return { path, others, wasInvalid: !!state.invalid, backupPath }
+  return { path, others, wasInvalid: !!state.invalid, wasRepaired: !!state.repaired, backupPath }
 }
 
 // Codex: lê ~/.codex/config.toml (ou $CODEX_HOME). Só mexe se o Codex existe na máquina
@@ -346,7 +441,7 @@ function writeCodexConfig(token, path = codexConfigPath()) {
   const body = kept.join('\n').replace(/\s*$/, '')
   const out = `${body ? `${body}\n\n` : ''}${codexBlock(token)}`
   mkdirSync(dirname(path), { recursive: true })
-  writeFileSync(path, out)
+  writeAtomic(path, out)
   try {
     chmodSync(path, 0o600)
   } catch {
@@ -432,6 +527,9 @@ async function main() {
   else missing.push(['Claude Desktop', 'https://claude.com/download'])
   for (const [name, url] of missing) warn(`Não achei o ${name}. Baixe aqui: ${url} (dá para continuar e instalar depois)`)
 
+  // Fecha o Claude Desktop antes de ler e gravar o config (ele reescreve o arquivo ao sair).
+  await closeClaude()
+
   // Antes de pedir a chave: se a configuração tem algo que seria trocado, avisa e para.
   await confirmConflict(allConfigPaths())
 
@@ -468,6 +566,7 @@ async function main() {
   step(3, 'Ligando o Figma no Claude Desktop')
   for (const path of allConfigPaths()) {
     const result = writeConfig(token, path)
+    if (result.wasRepaired) warn('O arquivo antigo tinha texto sobrando depois do fim (o Claude recusava). Consertei e guardei a cópia .bak.')
     if (result.wasInvalid) warn('O arquivo antigo era inválido: guardei a cópia .bak e criei um novo, só com a conexão do Figma.')
     ok(`configurado em ${result.path}`)
     if (result.backupPath) ok(`cópia do config anterior: ${result.backupPath}`)
@@ -502,7 +601,7 @@ async function main() {
   ok(`plugin pronto em ${manifest}`)
 
   console.log('\nFalta pouco, faça nesta ordem:\n')
-  console.log(`  A. Feche o Claude Desktop por completo (${IS_MAC ? 'Cmd+Q' : 'clique direito no ícone perto do relógio > Quit'}) e abra de novo.`)
+  console.log(`  A. Abra o Claude Desktop (se ainda estiver aberto, feche por completo com ${IS_MAC ? 'Cmd+Q' : 'clique direito no ícone perto do relógio > Quit'} e abra de novo).`)
   console.log('  B. No Figma Desktop: menu Plugins > Development > Import plugin from manifest...')
   console.log(`     Escolha este arquivo: ${manifest}`)
   if (copyToClipboard(manifest)) console.log(`     (o caminho já está copiado: na janela que o Figma abre, ${IS_MAC ? 'aperte Cmd+Shift+G e cole' : 'cole no campo "Nome do arquivo" e clique em Abrir'})`)

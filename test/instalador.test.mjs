@@ -100,5 +100,14 @@ if (process.argv.includes('--rede')) {
   check(`8 plugin criado de verdade (${secs} s)`, r.code === 0 && existsSync(join(h, '.figma-console-mcp', 'plugin', 'manifest.json')), r.out)
 }
 
+// R. Config com texto sobrando depois do fim (erro do Claude no Windows, 18/11/2026):
+// conserta sem pedir "sim", mantém a chave salva e os outros conectores, e o resultado é JSON válido.
+h = home()
+put(h, JSON.stringify({ mcpServers: { outro: { command: 'x' }, 'figma-console': { command: WIN ? 'cmd' : 'npx', args: WIN ? ['/c', 'npx', '-y', 'figma-console-mcp@1.35.0'] : ['-y', 'figma-console-mcp@1.35.0'], env: { FIGMA_ACCESS_TOKEN: TOK, ENABLE_MCP_APPS: 'true' } } }, preferences: { a: '{ } "' } }, null, 2) + '\n  }\n}\n')
+r = run(h)
+c = (() => { try { return read(cfgOf(h)) } catch { return null } })()
+check('R conserta texto sobrando no fim', r.code === 0 && c?.mcpServers?.outro && c?.mcpServers?.['figma-console']?.env?.FIGMA_ACCESS_TOKEN === TOK && c?.preferences?.a === '{ } "' && /texto sobrando/.test(r.out), r.out)
+check('R não deixa arquivo temporário', !readdirSync(join(h, 'cfg')).some((f) => f.includes('.tmp-')))
+
 console.log(fails ? `\n${fails} falha(s)` : '\nTudo passou')
 process.exit(fails ? 1 : 0)
