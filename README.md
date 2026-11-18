@@ -169,7 +169,7 @@ Funciona também. É o mesmo servidor, com outro agente na ponta: o cabo USB-C. 
 
 1. Abra o Codex uma vez antes, para ele criar a pasta `~/.codex`.
 2. Faça as partes 1 e 2 do mesmo jeito. O instalador acha o Codex sozinho e grava a conexão também no `~/.codex/config.toml`, sem mexer no resto do arquivo. Na tela aparece `[ok] Codex também ligado em ...`. Não apareceu? Rode o comando de novo com ` --codex` no fim. Sem o Claude Desktop, ele avisa e deixa continuar.
-3. Feche o Codex por completo e abra de novo, com o plugin rodando no Figma. Mande o mesmo teste da parte 2.
+3. Feche o Codex por completo e abra de novo, com o plugin rodando no Figma. Mande o mesmo teste da parte 2. Na primeira vez, o Codex pede permissão para usar o figma-console: permita. Pronto quando ele responde o nome do arquivo e da página.
 
 Quer conferir ou fazer à mão? O bloco que o instalador grava é este, com a sua chave no lugar de `figd_...`. O `startup_timeout_sec` importa: na primeira vez o `npx` baixa o servidor, e o tempo padrão do Codex (10 segundos) acaba antes.
 
