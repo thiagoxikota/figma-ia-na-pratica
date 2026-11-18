@@ -32,3 +32,17 @@ jobs:
           test -f "$CASA/.figma-console-mcp/plugin/manifest.json"
           grep -q figma-console "$MCP_CONFIG_PATH"
           echo "npx OK"
+      - name: Codex, numa casa limpa, abre o servidor com o bloco gravado
+        shell: bash
+        env:
+          FIGMA_ACCESS_TOKEN: figd_TESTE_ci_codex
+          INSTALAR_SEM_ABRIR: '1'
+        run: |
+          CASA="$RUNNER_TEMP/casa codex"
+          mkdir -p "$CASA/.codex"
+          export MCP_CONFIG_PATH="$CASA/cfg.json" CODEX_HOME="$CASA/.codex"
+          HOME="$CASA" USERPROFILE="$CASA" node instalar.mjs --sem-plugin --codex < /dev/null || test $? -eq 3
+          grep -q startup_timeout_sec "$CODEX_HOME/config.toml"
+          npm install -g @openai/codex > /dev/null 2>&1
+          codex mcp get figma-console
+          node test/codex-handshake.mjs "$CODEX_HOME/config.toml"
