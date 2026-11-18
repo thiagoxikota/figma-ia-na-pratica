@@ -120,6 +120,7 @@ O pendrive circula durante a sala, sem parar o workshop, ou no coffee.
 Não há máquina reserva nem máquina do evento [VERIFICAR com a Gi].
 
 - **Conexão não subiu ou caiu:** telão e edição à mão. Uma volta na mesa e uma na sala, no lugar da pessoa.
+- **O instalador falhou na máquina da pessoa:** siga o "Plano B: instalação manual" do guia, no lugar dela. Também está nos slides bônus, no fim do deck.
 - **Chave vencida ou revogada:** na mesa, a pessoa cria outra e roda o instalador de novo. Na sala, o mesmo, no lugar da pessoa; não deu, telão.
 - **Limite da conta:** prompt 1, edição à mão no Figma; prompt 2, plano C. Telão e casa como complemento.
 - **O prompt 1 quebrou o frame:** Cmd+Z (Ctrl+Z) e corrigir à mão.

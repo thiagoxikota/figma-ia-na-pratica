@@ -301,8 +301,18 @@ Pronto quando: as cinco conferências batem.
 
 Nada daqui é obrigatório hoje. É o caminho para depois.
 
-- **Netlify Drop: o site no ar.** Para quem terminou e criou a conta na parte 3. Entre na conta, abra https://app.netlify.com/drop e arraste a pasta `meu-site` inteira (a pasta, não o arquivo solto). Em segundos sai um link terminando em `.netlify.app`. Abra o link numa janela anônima (Cmd+Shift+N no Chrome e no Safari do Mac, Ctrl+Shift+N no Chrome do Windows): se abriu lá, abre para qualquer pessoa. Depois, no celular.
-- **GitHub: o cofre com histórico.** A sua pasta é onde o site nasce. O GitHub guarda cada versão dela, com data e o que mudou; errou, volta para a de ontem. Esse cofre se chama repositório. O Netlify é a vitrine que dá o link. Ligando os dois, cada mudança guardada no GitHub vira site novo sozinha.
+- **Netlify: o site no ar.**
+  - *O que é:* uma hospedagem. Você entrega a pasta do site e ele devolve um link público, terminando em `.netlify.app`.
+  - *Para que serve:* mandar o link para cliente, recrutador ou amigo abrir em qualquer lugar, inclusive no celular.
+  - *Quando usar:* terminou o `index.html` e quer mostrar. O plano grátis cobre site simples como o de hoje.
+  - *Como, em três passos:* crie a conta grátis em https://www.netlify.com (parte 3 do preparo). Abra https://app.netlify.com/drop e arraste a pasta `meu-site` inteira (a pasta, não o arquivo solto). Em segundos sai o link. Abra numa janela anônima (Cmd+Shift+N no Chrome e no Safari do Mac, Ctrl+Shift+N no Chrome do Windows): se abriu lá, abre para qualquer pessoa. Depois, no celular.
+  - *Outras opções que fazem o mesmo:* Vercel (https://vercel.com), GitHub Pages (https://pages.github.com) e Cloudflare Pages (https://pages.cloudflare.com).
+- **GitHub: o histórico do site.**
+  - *O que é:* um cofre para projetos. Cada pasta guardada lá se chama repositório, e ele registra cada versão, com data e o que mudou.
+  - *Para que serve:* errou, volta para a versão de ontem. Também mostra o seu código no portfólio e, ligado ao Netlify, publica o site sozinho a cada mudança.
+  - *Quando usar:* quando o site vai mudar mais de uma vez, ou quando você for trabalhar com o Claude Code, que usa o GitHub o tempo todo.
+  - *Como, sem terminal:* crie a conta em https://github.com . Clique em **New repository**, dê o nome `meu-site` e crie. Na página do repositório vazio, clique em **uploading an existing file** e arraste o que está dentro da pasta `meu-site`. Clique em **Commit changes**. Para publicar pelo Netlify: **Add new project > Import an existing project > GitHub**, escolha `meu-site` e confirme. A partir daí, cada mudança guardada no GitHub vira site novo.
+  - *Prefere um app em vez do site?* O GitHub Desktop (https://desktop.github.com) faz o mesmo com botões. *Outras opções:* GitLab e Bitbucket.
 - **PageSpeed Insights: a nota do site.** Com o link no ar, cole em https://pagespeed.web.dev . Ele usa o Lighthouse e dá notas de desempenho, acessibilidade e boas práticas, com o que melhorar.
 - **React Bits: componentes animados.** https://reactbits.dev . São componentes em React, para depois, quando você trabalhar num projeto com o Claude Code. Não encaixam no `index.html` de hoje.
 - **Mobbin MCP: referência real dentro do agente.** O Mobbin é uma biblioteca de telas de apps reais. O MCP dele deixa o agente buscar referência ali. Disponível nos planos Pro e Team.
@@ -324,20 +334,20 @@ Pela conexão com o Figma, leia o frame 'Minha hero' e critique como um diretor 
 
 **Fluxos opcionais**
 
-- **Handoff.** O agente lê o frame e escreve o que um dev precisa saber.
+- **Handoff.** O agente lê o frame e escreve o que um dev precisa saber. Use antes de passar a tela para alguém codar. Ele não muda nada no arquivo.
 
 ```
 Pela conexão com o Figma, leia o frame 'Minha hero' e escreva o handoff para um dev: variáveis usadas, espaçamentos, tamanhos de texto e estados do botão. Não mude nada no arquivo.
 ```
 
-- **Versão celular.** Um frame novo ao lado, sem mexer no original.
+- **Versão celular.** Um frame novo de 390 de largura ao lado, sem mexer no original. Use quase sempre: a maioria das pessoas vai abrir o seu site no celular. Depois, confira se ele usou as variáveis da coleção.
 
 ```
 Use o Figma Console MCP para duplicar o frame 'Minha hero' ao lado, com o nome 'Minha hero celular' e 390 de largura. Use só as variáveis da coleção Workshop Tokens. A foto vai para baixo do texto e nenhum texto é cortado. Não mude o frame original.
 ```
 
-- **Codex na mesma ponte.** Se o Codex estava instalado, o instalador já ligou a conexão nele. Abra o Codex, mande o mesmo alô e aprove a ferramenta na primeira vez.
-- **Site no ar.** Netlify Drop, como em Próximos passos.
+- **Codex na mesma ponte.** O Codex é o agente da OpenAI. Use quando acabar o limite do Claude ou quando quiser uma segunda opinião sobre o mesmo frame. Se ele estava instalado, o instalador já ligou a conexão nele: abra o Codex, mande o mesmo alô e aprove a ferramenta na primeira vez.
+- **Site no ar.** Netlify, explicado em Próximos passos. Para guardar versões, o GitHub, logo abaixo dele.
 
 **Mais dicas**
 
@@ -382,6 +392,55 @@ Se quiser, desligue a conexão nas configurações do Claude Desktop. Para usar 
 - O agente trabalha melhor com arquivo organizado: camadas com nome, Auto Layout e cores ligadas a variáveis. Evite arquivo de cliente com dado sensível.
 - Para mudar a hero, edite o frame, peça um novo `index.html` e substitua o arquivo em `meu-site`.
 
+
+## Plano B: instalação manual
+
+Use só se o instalador falhar. O resultado é o mesmo: a conexão no Claude Desktop e o plugin no Figma.
+
+**1. A chave do Figma.** Crie como no passo 2 da parte 2: Settings > Security > Personal access tokens, 7 dias, só leitura em File content. Copie a chave `figd_...`.
+
+**2. A conexão no Claude Desktop.** Abra o Claude Desktop. Menu **Settings > Developer > Edit Config**. Ele mostra o arquivo `claude_desktop_config.json`. Abra esse arquivo num editor de texto (TextEdit em texto simples no Mac, Bloco de Notas no Windows) e cole o bloco abaixo, trocando `figd_...` pela sua chave.
+
+Mac:
+
+```
+{
+  "mcpServers": {
+    "figma-console": {
+      "command": "npx",
+      "args": ["-y", "figma-console-mcp@1.35.0"],
+      "env": { "FIGMA_ACCESS_TOKEN": "figd_...", "ENABLE_MCP_APPS": "true" }
+    }
+  }
+}
+```
+
+Windows (o Claude Desktop não abre o `npx` direto, por isso o `cmd`):
+
+```
+{
+  "mcpServers": {
+    "figma-console": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "figma-console-mcp@1.35.0"],
+      "env": { "FIGMA_ACCESS_TOKEN": "figd_...", "ENABLE_MCP_APPS": "true" }
+    }
+  }
+}
+```
+
+O arquivo já tinha outras conexões? Não apague nada: cole só o trecho `"figma-console": { ... }` dentro do `"mcpServers"` que já existe, separado do anterior por vírgula.
+
+**3. Reinicie o Claude Desktop.** Feche por completo (Mac: Cmd+Q; Windows: saia também pelo ícone perto do relógio) e abra de novo. Na primeira vez ele baixa a ponte: espere de 1 a 2 minutos. Em Settings > Developer, `figma-console` aparece como **running**. Se aparecer erro, confira vírgulas e aspas do bloco.
+
+**4. O plugin no Figma.** Quando a ponte liga pela primeira vez, ela cria o plugin nesta pasta:
+
+- Mac: `~/.figma-console-mcp/plugin/manifest.json`
+- Windows: `%USERPROFILE%\.figma-console-mcp\plugin\manifest.json`
+
+No Figma Desktop: **Plugins > Development > Import plugin from manifest** e cole o caminho (Mac: Cmd+Shift+G antes de colar; Windows: no campo Nome do arquivo). Depois rode **Figma Desktop Bridge** e espere a bolinha verde e **Connected**.
+
+**5. Teste.** Faça o passo 6 da parte 2: o Claude tem que responder o nome do arquivo e o frame selecionado.
 
 ## Quando dá errado
 
