@@ -307,6 +307,71 @@ Nada daqui é obrigatório hoje. É o caminho para depois.
 - **React Bits: componentes animados.** https://reactbits.dev . São componentes em React, para depois, quando você trabalhar num projeto com o Claude Code. Não encaixam no `index.html` de hoje.
 - **Mobbin MCP: referência real dentro do agente.** O Mobbin é uma biblioteca de telas de apps reais. O MCP dele deixa o agente buscar referência ali. Disponível nos planos Pro e Team.
 
+### Bônus: para quem quer ir além
+
+Só se sobrar tempo e mensagem. Cada prompt uma vez.
+
+**Quebra-gelo, com quem está do lado**
+
+- Mostre a sua hero e conte por que escolheu essa cor.
+- Peça a crítica e veja se você concorda com o agente:
+
+```
+Pela conexão com o Figma, leia o frame 'Minha hero' e critique como um diretor de arte exigente, em três pontos curtos. Não mude nada no arquivo.
+```
+
+- Qual tarefa chata do seu trabalho você entregaria a um agente amanhã?
+
+**Fluxos opcionais**
+
+- **Handoff.** O agente lê o frame e escreve o que um dev precisa saber.
+
+```
+Pela conexão com o Figma, leia o frame 'Minha hero' e escreva o handoff para um dev: variáveis usadas, espaçamentos, tamanhos de texto e estados do botão. Não mude nada no arquivo.
+```
+
+- **Versão celular.** Um frame novo ao lado, sem mexer no original.
+
+```
+Use o Figma Console MCP para duplicar o frame 'Minha hero' ao lado, com o nome 'Minha hero celular' e 390 de largura. Use só as variáveis da coleção Workshop Tokens. A foto vai para baixo do texto e nenhum texto é cortado. Não mude o frame original.
+```
+
+- **Codex na mesma ponte.** Se o Codex estava instalado, o instalador já ligou a conexão nele. Abra o Codex, mande o mesmo alô e aprove a ferramenta na primeira vez.
+- **Site no ar.** Netlify Drop, como em Próximos passos.
+
+**Mais dicas**
+
+- Peça para ler antes de escrever: "descreva o frame antes de mudar qualquer coisa".
+- Um ajuste por vez, terminando com: não mude mais nada.
+- Regra escrita vence prompt longo. Achou um erro que se repete? Vira linha no `DESIGN.md`.
+- Confira nas camadas, não no print.
+- O plugin caiu? Feche a janela do plugin e abra de novo antes de pensar em reinstalar.
+
+**Roube a stack do Thiago**
+
+Agentes e conexões:
+
+- **Claude Code**: o agente no terminal, que lê a pasta inteira do projeto. https://claude.com/claude-code
+- **Codex**: o agente da OpenAI, que uso como segunda opinião. https://developers.openai.com/codex
+- **Figma Console MCP**: a ponte de hoje. https://github.com/southleft/figma-console-mcp
+- **Context7**: documentação atualizada de qualquer biblioteca, dentro do agente. https://context7.com
+- **Playwright MCP**: o agente abre o navegador e testa o site sozinho. https://github.com/microsoft/playwright-mcp
+
+Skills e plugins do Claude Code:
+
+- **frontend-design**: tira a cara de template das telas que o agente faz.
+- **superpowers**: faz o agente planejar antes de sair codando. https://github.com/obra/superpowers
+- **skill-creator**: escreve a sua primeira skill com você. Comece por uma tarefa que você repete toda semana.
+
+O frontend-design e o skill-creator estão no catálogo oficial: no Claude Code, digite `/plugin`. O superpowers tem catálogo próprio, explicado no link.
+
+Sites:
+
+- Referência de tela: https://refero.design , https://mobbin.com , https://land-book.com , https://www.lapa.ninja , https://godly.website
+- Componentes e ícones: https://ui.shadcn.com , https://reactbits.dev , https://hugeicons.com
+- Fontes: https://www.fontshare.com
+- Conferir: https://pagespeed.web.dev
+
 ### Depois do workshop
 
 Se quiser, desligue a conexão nas configurações do Claude Desktop. Para usar de novo em casa, crie uma chave nova e rode o instalador outra vez.
